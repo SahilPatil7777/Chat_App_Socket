@@ -7,23 +7,23 @@ const server = http.createServer(app);
 const io = socketio(server);
 
 // socket connection where we can listen to the event
+
 io.on("connection", (socket) => {
-  console.log("a use connected", socket.id);
+  console.log("a user connected", socket.id);
 
-  socket.on("from_client", () => {
-    console.log("Event coming from client");
+  socket.on("msg_send", (data) => {
+    console.log("Message received:", data);
+    // io.emit("msg_rcvd", data);
+    // socket.emit("msg_rcvd", data);
+    socket.broadcast.emit("msg_rcvd", data);
   });
-
-  setInterval(() => {
-    socket.emit("from_server");
-  }, 1000);
 });
 
 // middleware
 app.use("/", express.static(__dirname + "/public"));
 
 server.listen(3000, () => {
-  console.log(`Server Stated on port 3000`);
+  console.log(`Server started on port 3000`);
 });
 
 // on is consumes the event
